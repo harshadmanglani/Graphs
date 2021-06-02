@@ -59,22 +59,16 @@ class Graph
         return edges;
     }
 
-    //TODO: come back to this
+    void removeDirectedEdge(int A, int B)
+    {
+        nodes[A].erase(B);
+    }
 
-    // bool removeDirectedEdge(int A, int B)
-    // {
-    //     Node *src = this->nodes[A];
-    //     Node *dest = this->nodes[B];
-    //     src->removeNeighbor(dest);
-    //     return true;
-    // }
-
-    // bool removeUndirectedEdge(int A, int B)
-    // {
-    //     this->removeDirectedEdge(A, B);
-    //     this->removeDirectedEdge(B, A);
-    //     return true;
-    // }
+    void removeUndirectedEdge(int A, int B)
+    {
+        removeDirectedEdge(A, B);
+        removeDirectedEdge(B, A);
+    }
 
     void printDFS()
     {
@@ -401,7 +395,6 @@ class BellmanFord{
         }
     }
 
-    // TODO: this isn't working right
     bool negativeCycleCheck(vector<pair<int, int>> edges)
     {
         for(int i = 0; i < edges.size(); ++i)
@@ -433,6 +426,11 @@ class BellmanFord{
             cout<<i<<" : "<<distanceVector[i]<<endl;
         }
     }
+
+};
+
+class TravelingSalesman
+{
 
 };
 
