@@ -312,7 +312,6 @@ class Djikstra
 
     void printCostTable()
     {
-        // TODO: add check to call runDjikstrasAlgorithm before calling printCostTable
         for(int i = 0; i < distanceVector.size(); ++i)
         {
             cout<<i<<" : "<<distanceVector[i]<<endl;
@@ -420,13 +419,11 @@ class BellmanFord{
 
     void printCostTable()
     {
-        // TODO: add check to call runDjikstrasAlgorithm before calling printCostTable
         for(int i = 0; i < distanceVector.size(); ++i)
         {
             cout<<i<<" : "<<distanceVector[i]<<endl;
         }
     }
-
 };
 
 class TravelingSalesman
