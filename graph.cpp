@@ -3,9 +3,11 @@
 #include <math.h>
 using namespace std;
 
+// change this to false to turn off debug print statements
 bool debug = true;
-//adjacency list
-//an array of linked lists or an array of dynamic arrays
+// adjacency list implementation
+// an array of maps where:
+// 
 
 
 class Graph
@@ -46,14 +48,14 @@ class Graph
         return neighbors[v];
     }
 
-    vector<pair<int, int>> generateEdgeList()
+    vector<pair<pair<int, int>, int>> generateEdgeList()
     {
-        vector<pair<int, int>> edges;
+        vector<pair<pair<int, int>, int>> edges;
         for(int i = 0; i < v; ++i)
         {
             for(map<int, int>::iterator it = nodes[i].begin(); it != nodes[i].end(); ++it)
             {
-                edges.push_back({i, it->first});
+                edges.push_back({{i, it->first}, it->second});
             }
         }
         return edges;
@@ -70,30 +72,39 @@ class Graph
         removeDirectedEdge(B, A);
     }
 
-    void printDFS()
+    bool printDFS(bool cycleDetection=false)
     {
-        vector<bool> visited(v, false);
+        vector<int> visited(v, 0);
+        // 0 : unvisited
+        // 1 : visiting
+        // 2 : visited
+        if(!cycleDetection)
         cout<<"Depth First Search:\n";
         for(int i = 0; i < v; ++i)
         {
-            DFSUtil(i, visited);
+            if(DFSUtil(i, visited, cycleDetection))
+                return true;
         }
+        return false;
     }
 
-    void DFSUtil(int node, vector<bool>& visited)
+    bool DFSUtil(int node, vector<int>& visited, bool cycleDetection=false)
     {
-        if(visited[node])
-            return;
-
+        if(visited[node] == 1)
+            return true;
         //visit
-        visited[node] = true;
+        visited[node] = 1;
+        if(!cycleDetection)
         cout<<node<<" ";
         //traverse the depth
         for(auto it = nodes[node].begin(); it != nodes[node].end(); ++it)
         {
             // DFSUtil(neighbor, visited);
-            DFSUtil(it->first, visited);
+            if(visited[it->first] != 2 && DFSUtil(it->first, visited, cycleDetection))
+                return false;
         }
+        visited[node] = 2;
+        return false;
     }
 
     void printBFS()
@@ -138,7 +149,7 @@ class Graph
 
     bool detectCycles()
     {
-        return true;
+        return printDFS(true);
     }
 };
 
@@ -360,21 +371,21 @@ class BellmanFord{
 
     void runBellmanFordAlgorithm()
     {
-        vector<pair<int, int>> edges = graph->generateEdgeList();
+        vector<pair<pair<int, int>, int>> edges = graph->generateEdgeList();
         bool updateFlag = true;
-        for(int r = 0; r < v - 1; ++r)
+        for(int r = 0; r < v; ++r)
         {
             // stop looping when you reach the final set of distances
             if(!updateFlag)
                 break;
             updateFlag = false;
-            for(int i = 0; i < edges.size(); ++i)
+            for(auto it = edges.begin(); it != edges.end(); ++it)
             {
-                int u = edges[i].first;
-                int v = edges[i].second;
+                int u = it->first.first;
+                int v = it->first.second;
+                int weight = it->second;
                 if(debug)
                 cout<<"edge: "<<u<<"->"<<v<<endl;
-                int weight = graph->returnWeight(u, v);
                 if(weight == INT_MIN)
                 {
                     cout<<"An error occured.\n";
@@ -384,37 +395,14 @@ class BellmanFord{
                 {
                     distanceVector[v] = distanceVector[u] + weight;
                     updateFlag = true;
+                    if(r == graph->returnV() - 1)
+                    {
+                        cout<<"Negative cycle detected. Discarding weights.\n";
+                        distanceVector.clear();
+                    }
                 }
             }
         }
-        if(negativeCycleCheck(edges))
-        {
-            cout<<"Negative cycle detected. Discarding weights.\n";
-            distanceVector.clear();
-        }
-    }
-
-    bool negativeCycleCheck(vector<pair<int, int>> edges)
-    {
-        for(int i = 0; i < edges.size(); ++i)
-        {
-            int u = edges[i].first;
-            int v = edges[i].second;
-            if(debug)
-            cout<<"edge: "<<u<<"->"<<v<<endl;
-            int weight = graph->returnWeight(u, v);
-            if(weight == INT_MIN)
-            {
-                cout<<"An error occured.Aborting.\n";
-                return true;
-            }
-            if(distanceVector[u] + weight < distanceVector[v])
-            {
-                // negative cycle
-                return true;
-            }
-        }
-        return false;
     }
 
     void printCostTable()
@@ -425,6 +413,11 @@ class BellmanFord{
         }
     }
 };
+
+bool cmp(pair<pair<int, int>, int> a, pair<pair<int, int>, int> b)
+{
+    return a.second < b.second;
+}
 
 class KruskalMST
 {
@@ -437,18 +430,50 @@ class KruskalMST
         this->graph = graph;
         v = graph->returnV();
     }
+
+    void runKruskalAndPrintMST()
+    {
+        vector<pair<pair<int, int>, int>> edges = graph->generateEdgeList();
+        Graph MST(v);
+        sort(edges.begin(), edges.end(), cmp);
+        auto it = edges.begin();
+        int numberOfEdges = 0;
+        while(numberOfEdges != this->v - 1)
+        {
+            int u = it->first.first;
+            int v = it->first.second;
+            int weight = it->second;
+            // NOTE: this is a weird hack, we convert edges from an undirected graph to a directed graph in code to make this work.
+            MST.addDirectedEdge(u, v, weight);
+            numberOfEdges++;
+            if(debug)
+                cout<<u<<" -> "<<v<<": "<<weight<<" added";
+            if(MST.detectCycles())
+            {
+                MST.removeDirectedEdge(u, v);
+                numberOfEdges--;
+                cout<<" and then removed.";
+            }
+            cout<<endl;
+            ++it;
+        }
+    }
+
 };
 
 
 int main()
 {
-    // Uncomment the below line to turn off debugging.
-    // debug = false;
-    BellmanFord obj(graphB());
-    obj.runBellmanFordAlgorithm();
-    obj.printCostTable();
+    // BellmanFord obj(graphB());
+    // obj.runBellmanFordAlgorithm();
+    // obj.printCostTable();
+    
     // Djikstra obj(graphA());
     // obj.runDjikstrasAlgorithm();
     // obj.printCostTable();
+
+    // NOTE: pass undirected graphs only
+    KruskalMST obj(graphA());
+    obj.runKruskalAndPrintMST();
     return 0;
 }
