@@ -144,7 +144,7 @@ class Graph
 
 Graph* graphA()
 {
-
+    // your standard GeeksForGeeks graph, also works for prim's and kruskal's
     // does not have negative weights or cycles
     // Djikstra output
     // Vertex   Distance from Source
@@ -426,9 +426,17 @@ class BellmanFord{
     }
 };
 
-class TravelingSalesman
+class KruskalMST
 {
+    Graph *graph;
+    int v;
 
+    public:
+    KruskalMST(Graph *graph)
+    {
+        this->graph = graph;
+        v = graph->returnV();
+    }
 };
 
 
