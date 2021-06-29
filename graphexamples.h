@@ -2,22 +2,21 @@
 #define GRAPHEXAMPLES_H
 #include "graph.h"
 
+/// your standard GeeksForGeeks graph, also works for prim's and kruskal's
+/// does not have negative weights or cycles
+/// Djikstra output
+/// Vertex   Distance from Source
+/// 0................0
+/// 1................4
+/// 2................12
+/// 3................19
+/// 4................21
+/// 5................11
+/// 6................9
+/// 7................8
+/// 8................14
 Graph* graphA()
 {
-    // your standard GeeksForGeeks graph, also works for prim's and kruskal's
-    // does not have negative weights or cycles
-    // Djikstra output
-    // Vertex   Distance from Source
-    // 0                0
-    // 1                4
-    // 2                12
-    // 3                19
-    // 4                21
-    // 5                11
-    // 6                9
-    // 7                8
-    // 8                14
-
     Graph* graph = new Graph(9);
     graph->addUndirectedEdge(0, 1, 4);
     graph->addUndirectedEdge(0, 7, 8);
@@ -39,16 +38,16 @@ Graph* graphA()
 Graph* graphB()
 {
 
-    // has negative weights but no cycles
-    // Bellman Ford output
-    // Vertex   Distance from Source
-    // 0            0
-    // 1            1
-    // 2            3
-    // 3            5
-    // 4            0
-    // 5            4
-    // 6            3
+    /// has negative weights but no cycles
+    /// Bellman Ford output
+    /// Vertex   Distance from Source
+    /// 0            0
+    /// 1            1
+    /// 2            3
+    /// 3            5
+    /// 4            0
+    /// 5            4
+    /// 6            3
 
     Graph *graph = new Graph(7);
     graph->addDirectedEdge(0, 2, 5);
@@ -66,8 +65,8 @@ Graph* graphB()
 
 Graph* graphC()
 {
-    // has negative weights and a negative weight cycle
-    // Bellman Ford needs to handle this graph gracefully
+    /// has negative weights and a negative weight cycle
+    /// Bellman Ford needs to handle this graph gracefully
 
     Graph *graph = new Graph(4);
     graph->addDirectedEdge(0, 1, 4);
@@ -78,4 +77,46 @@ Graph* graphC()
     return graph;
 }
 
+Graph* graphD()
+{
+    /// Traveling salesman
+    /// Minimum weight Hamiltonian Cycle = 80
+    
+    Graph *graph = new Graph(4);
+    graph->addUndirectedEdge(0, 1, 10);
+    graph->addUndirectedEdge(0, 2, 15);
+    graph->addUndirectedEdge(2, 1, 35);
+    graph->addUndirectedEdge(0, 3, 20);
+    graph->addUndirectedEdge(3, 1, 25);
+    graph->addUndirectedEdge(3, 2, 30);
+    return graph;
+}
+
+Graph *graphE()
+{
+    Graph *graph = new Graph(4);
+    graph->addDirectedEdge(0, 1, 10);
+    graph->addDirectedEdge(0, 2, 15);
+    graph->addDirectedEdge(0, 3, 20);
+    graph->addDirectedEdge(1, 0, 5);
+    graph->addDirectedEdge(1, 2, 9);
+    graph->addDirectedEdge(1, 3, 10);
+    graph->addDirectedEdge(2, 0, 6);
+    graph->addDirectedEdge(2, 1, 13);
+    graph->addDirectedEdge(2, 3, 12);
+    graph->addDirectedEdge(3, 0, 8);
+    graph->addDirectedEdge(3, 1, 8);
+    graph->addDirectedEdge(3, 2, 9);
+    return graph;
+}
+
+Graph *graphWithCycle()
+{
+    Graph *graph = new Graph(4);
+    graph->addDirectedEdge(0, 1, 10);
+    graph->addDirectedEdge(1, 2, 10);
+    graph->addDirectedEdge(2, 3, 10);
+    graph->addDirectedEdge(3, 1, 10);
+    return graph;
+}
 #endif

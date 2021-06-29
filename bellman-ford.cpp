@@ -47,17 +47,20 @@ class BellmanFord{
         }
     }
 
+    // Time complexity: O(VE)
     void runBellmanFordAlgorithm()
     {
         vector<pair<pair<int, int>, int>> edges = graph->generateEdgeList();
         bool updateFlag = true;
-        for(int r = 0; r < v; ++r)
+        // O(V)
+        for(int r = 0; r < v; ++r) // RUNS V-1 TIMES ORIGINALLY, it runs an additional iteration for checking a negative weight cycle
         {
             // stop looping when you reach the final set of distances
             if(!updateFlag)
                 break;
             updateFlag = false;
-            for(auto it = edges.begin(); it != edges.end(); ++it)
+            // O(E)
+            for(auto it = edges.begin(); it != edges.end(); ++it) // in case of a connected graph, max edges are E
             {
                 int u = it->first.first;
                 int v = it->first.second;

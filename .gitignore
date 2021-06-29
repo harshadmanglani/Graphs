@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+
+# Incomplete
+traveling-salesman.cpp
